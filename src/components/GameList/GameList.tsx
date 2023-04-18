@@ -1,10 +1,11 @@
 import GameCard from '../GameCard';
-import type { GameProp } from '../../App';
+
+import type { GameCardProps } from '../GameCard';
 
 import styles from './GameList.module.scss';
 
 type GameListProps = {
-  games: GameProp[];
+  games: GameCardProps[];
 };
 
 function GameList({ games }: GameListProps) {
@@ -16,12 +17,14 @@ function GameList({ games }: GameListProps) {
     <div className={styles.wrapper}>
       {games.map((game) => (
         <GameCard
-          key={game.appid}
-          gameId={game.appid}
-          imageUrl={`http://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_icon_url}.jpg`}
+          key={game.gameId}
+          gameId={game.gameId}
+          imageHash={game.imageHash}
           name={game.name}
-          totalPlayTime={game.playtime_forever}
-          twoWeeksPlayTime={game.playtime_2weeks}
+          totalPlayTime={game.totalPlayTime}
+          twoWeeksPlayTime={game.twoWeeksPlayTime}
+          totalAchievements={game.totalAchievements}
+          unlockedAchievements={game.unlockedAchievements}
         />
       ))}
     </div>
