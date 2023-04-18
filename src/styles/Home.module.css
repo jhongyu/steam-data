@@ -1,0 +1,8 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: fit-content;
+  min-width: 450px;
+  margin: 2rem auto;
+}

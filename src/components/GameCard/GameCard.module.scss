@@ -1,0 +1,32 @@
+.wrapper {
+  width: 100%;
+  display: grid;
+  grid-template-areas:
+    'image name name'
+    'image time achievements';
+  grid-template-columns: 30% 40% 30%;
+  gap: 10px;
+}
+
+.imageWrapper {
+  grid-area: image;
+  display: grid;
+  place-content: center;
+  position: relative;
+}
+
+.gameName {
+  grid-area: name;
+  text-align: start;
+}
+
+.playTimeWrapper {
+  grid-area: time;
+  display: flex;
+  justify-content: space-between;
+}
+
+.achievementsWrapper {
+  grid-area: achievements;
+  text-align: center;
+}
