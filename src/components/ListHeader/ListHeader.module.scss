@@ -1,0 +1,20 @@
+.headerWrapper {
+  display: grid;
+  grid-template-areas: 'search time achievements';
+  grid-template-columns: 25% 50% 25%;
+  gap: 10px;
+}
+
+.search {
+  grid-area: search;
+}
+
+.playTime {
+  grid-area: time;
+  display: flex;
+  justify-content: space-between;
+}
+
+.achievements {
+  grid-area: achievements;
+}

@@ -4,7 +4,7 @@
   grid-template-areas:
     'image name name'
     'image time achievements';
-  grid-template-columns: 25% repeat(2, 1fr);
+  grid-template-columns: 25% 50% 25%;
   gap: 10px;
 }
 

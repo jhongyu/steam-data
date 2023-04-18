@@ -7,7 +7,7 @@ type GameCardProps = {
   name: string;
   gameId: string;
   totalPlayTime: number;
-  twoWeeksPlayTime?: number;
+  twoWeeksPlayTime: number;
 };
 
 type AchievementProps = {
@@ -19,7 +19,7 @@ function formatTime(minutes: number) {
   return minutes > 0 ? (minutes / 60).toFixed(1) : 0;
 }
 
-function GameCard({ imageUrl, name, gameId, totalPlayTime, twoWeeksPlayTime = 0 }: GameCardProps) {
+function GameCard({ imageUrl, name, gameId, totalPlayTime, twoWeeksPlayTime }: GameCardProps) {
   const [achievements, setAchievements] = useState<AchievementProps>({
     total: 0,
     unlocked: 0,
