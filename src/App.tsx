@@ -24,18 +24,31 @@ function App() {
         import.meta.env.VITE_STEAM_ID
       }&include_appinfo=true`
     )
-      .then((res) => res.json())
-      .then(async ({ response }) => {
-        const nextGames: GameCardProps[] = [];
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        }
+      })
+      .then(({ response }) => {
+        const resGames = response.games as GameProp[];
+        const gamesObj = {} as {
+          [key: string]: GameCardProps;
+        };
 
-        for (let game of response.games as GameProp[]) {
-          const res = await fetch(
-            `/api/ISteamUserStats/GetPlayerAchievements/v0001/?appid=${game.appid}&key=${
-              import.meta.env.VITE_STEAM_KEY
-            }&steamid=${import.meta.env.VITE_STEAM_ID}`
-          );
+        setGames(
+          resGames.map((game) => ({
+            imageHash: game.img_icon_url,
+            name: game.name,
+            gameId: game.appid,
+            totalPlayTime: game.playtime_forever,
+            twoWeeksPlayTime: game.playtime_2weeks || 0,
+            totalAchievements: 0,
+            unlockedAchievements: 0,
+          }))
+        );
 
-          const updatedGame: GameCardProps = {
+        resGames.forEach((game) => {
+          gamesObj[game.name] = {
             imageHash: game.img_icon_url,
             name: game.name,
             gameId: game.appid,
@@ -44,27 +57,61 @@ function App() {
             totalAchievements: 0,
             unlockedAchievements: 0,
           };
+        });
 
-          if (res.status === 200) {
-            const data = await res.json();
-            const { playerstats: playerStats } = data;
-            const unlockedAchievements = playerStats.achievements.filter(
-              (achievement: { unlocktime: number }) => achievement.unlocktime > 0
+        Promise.all(
+          resGames.map((game) =>
+            fetch(
+              `/api/ISteamUserStats/GetPlayerAchievements/v0001/?appid=${game.appid}&key=${
+                import.meta.env.VITE_STEAM_KEY
+              }&steamid=${import.meta.env.VITE_STEAM_ID}`
+            )
+          )
+        )
+          .then((responses) =>
+            Promise.all(
+              responses.map((res) => {
+                if (res.status === 200) {
+                  return res.json();
+                }
+              })
+            )
+          )
+          .then((data) => {
+            const filteredData = data.filter((item) => !!item);
+            const achievementsObj = {} as {
+              [key: string]: {
+                total: number;
+                unlocked: number;
+              };
+            };
+
+            filteredData.forEach(({ playerstats: playerStats }) => {
+              const { gameName, achievements } = playerStats;
+              const unlockedAchievements = achievements.filter(
+                (achievement: { achieved: boolean }) => achievement.achieved
+              );
+
+              achievementsObj[gameName] = {
+                total: achievements.length,
+                unlocked: unlockedAchievements.length,
+              };
+            });
+
+            setGames((prev) =>
+              prev.map((game) => {
+                if (achievementsObj[game.name]) {
+                  return {
+                    ...game,
+                    totalAchievements: achievementsObj[game.name].total,
+                    unlockedAchievements: achievementsObj[game.name].unlocked,
+                  };
+                } else {
+                  return game;
+                }
+              })
             );
-
-            nextGames.push({
-              ...updatedGame,
-              totalAchievements: playerStats.achievements.length,
-              unlockedAchievements: unlockedAchievements.length,
-            });
-          } else {
-            nextGames.push({
-              ...updatedGame,
-            });
-          }
-        }
-
-        setGames(nextGames);
+          });
       });
   }, []);
 
