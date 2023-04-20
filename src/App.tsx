@@ -19,10 +19,11 @@ function App() {
   const [games, setGames] = useState<GameCardProps[]>([]);
 
   useEffect(() => {
+    const { DEV: isDev, VITE_STEAM_KEY, VITE_STEAM_ID } = import.meta.env;
+    const prefixUrl = isDev ? '/api' : 'http://api.steampowered.com';
+
     fetch(
-      `/api/IPlayerService/GetOwnedGames/v0001/?key=${import.meta.env.VITE_STEAM_KEY}&steamid=${
-        import.meta.env.VITE_STEAM_ID
-      }&include_appinfo=true`
+      `${prefixUrl}/IPlayerService/GetOwnedGames/v0001/?key=${VITE_STEAM_KEY}&steamid=${VITE_STEAM_ID}&include_appinfo=true`
     )
       .then((response) => {
         if (response.status === 200) {
@@ -62,9 +63,7 @@ function App() {
         Promise.all(
           resGames.map((game) =>
             fetch(
-              `/api/ISteamUserStats/GetPlayerAchievements/v0001/?appid=${game.appid}&key=${
-                import.meta.env.VITE_STEAM_KEY
-              }&steamid=${import.meta.env.VITE_STEAM_ID}`
+              `${prefixUrl}/ISteamUserStats/GetPlayerAchievements/v0001/?appid=${game.appid}&key=${VITE_STEAM_KEY}&steamid=${VITE_STEAM_ID}`
             )
           )
         )
