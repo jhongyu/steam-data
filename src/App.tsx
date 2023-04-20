@@ -20,7 +20,7 @@ function App() {
 
   useEffect(() => {
     const { DEV: isDev, VITE_STEAM_KEY, VITE_STEAM_ID } = import.meta.env;
-    const prefixUrl = isDev ? '/api' : 'http://api.steampowered.com';
+    const prefixUrl = isDev ? '/api' : 'https://api.steampowered.com';
 
     fetch(
       `${prefixUrl}/IPlayerService/GetOwnedGames/v0001/?key=${VITE_STEAM_KEY}&steamid=${VITE_STEAM_ID}&include_appinfo=true`
